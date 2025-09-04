@@ -1,4 +1,5 @@
 import React from 'react';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { Users, Briefcase, Star, TrendingUp, ArrowRight, CheckCircle } from 'lucide-react';
 
 interface LandingPageProps {
@@ -24,7 +25,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob }) => {
             <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
             <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
             <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
           </nav>
+          
+          {/* Mobile Sign In */}
+          <div className="md:hidden">
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all text-sm">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+          </div>
         </div>
       </header>
 

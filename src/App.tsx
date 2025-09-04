@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import LandingPage from './components/LandingPage';
 import JobSeekerDashboard from './components/JobSeekerDashboard';
 import EmployerDashboard from './components/EmployerDashboard';
@@ -18,6 +19,7 @@ interface Job {
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'job-seeker' | 'employer'>('landing');
+  const { isSignedIn, user } = useUser();
   const [jobs, setJobs] = useState<Job[]>([
     {
       id: '1',
@@ -66,12 +68,30 @@ function App() {
     setJobs(prev => [job, ...prev]);
   };
 
+  const handleGetJob = () => {
+    if (isSignedIn) {
+      setCurrentView('job-seeker');
+    } else {
+      // User will be prompted to sign in via the SignInButton
+      alert('Please sign in to access the job seeker dashboard');
+    }
+  };
+
+  const handlePostJob = () => {
+    if (isSignedIn) {
+      setCurrentView('employer');
+    } else {
+      // User will be prompted to sign in via the SignInButton
+      alert('Please sign in to access the employer dashboard');
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {currentView === 'landing' && (
         <LandingPage 
-          onGetJob={() => setCurrentView('job-seeker')}
-          onPostJob={() => setCurrentView('employer')}
+          onGetJob={handleGetJob}
+          onPostJob={handlePostJob}
         />
       )}
       {currentView === 'job-seeker' && (

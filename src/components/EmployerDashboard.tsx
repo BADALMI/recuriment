@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { 
   ArrowLeft, 
@@ -51,11 +52,12 @@ interface Job {
 
 const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob }) => {
   const [activeTab, setActiveTab] = useState('post-job');
+  const { user } = useUser();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [jobForm, setJobForm] = useState({
     title: '',
-    company: '',
+    company: user?.organizationMemberships?.[0]?.organization?.name || '',
     location: '',
     salary: '',
     requirements: '',
