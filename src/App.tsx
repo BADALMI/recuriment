@@ -69,38 +69,34 @@ function App() {
   };
 
   const handleGetJob = () => {
-    if (isSignedIn) {
-      setCurrentView('job-seeker');
-    } else {
-      // User will be prompted to sign in via the SignInButton
-      alert('Please sign in to access the job seeker dashboard');
-    }
+    setCurrentView('job-seeker');
   };
 
   const handlePostJob = () => {
-    if (isSignedIn) {
-      setCurrentView('employer');
-    } else {
-      // User will be prompted to sign in via the SignInButton
-      alert('Please sign in to access the employer dashboard');
-    }
+    setCurrentView('employer');
   };
 
   return (
     <div className="min-h-screen">
-      {currentView === 'landing' && (
+      {!isSignedIn && currentView === 'landing' && (
         <LandingPage 
           onGetJob={handleGetJob}
           onPostJob={handlePostJob}
         />
       )}
-      {currentView === 'job-seeker' && (
+      {isSignedIn && currentView === 'landing' && (
+        <LandingPage 
+          onGetJob={handleGetJob}
+          onPostJob={handlePostJob}
+        />
+      )}
+      {isSignedIn && currentView === 'job-seeker' && (
         <JobSeekerDashboard 
           onBack={() => setCurrentView('landing')} 
           jobs={jobs}
         />
       )}
-      {currentView === 'employer' && (
+      {isSignedIn && currentView === 'employer' && (
         <EmployerDashboard 
           onBack={() => setCurrentView('landing')} 
           onAddJob={addJob}
