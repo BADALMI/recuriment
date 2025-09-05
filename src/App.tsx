@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
 import LandingPage from './components/LandingPage';
 import JobSeekerDashboard from './components/JobSeekerDashboard';
 import EmployerDashboard from './components/EmployerDashboard';
@@ -19,7 +18,6 @@ interface Job {
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'job-seeker' | 'employer'>('landing');
-  const { isSignedIn, user } = useUser();
   const [jobs, setJobs] = useState<Job[]>([
     {
       id: '1',
@@ -68,35 +66,21 @@ function App() {
     setJobs(prev => [job, ...prev]);
   };
 
-  const handleGetJob = () => {
-    setCurrentView('job-seeker');
-  };
-
-  const handlePostJob = () => {
-    setCurrentView('employer');
-  };
-
   return (
     <div className="min-h-screen">
-      {!isSignedIn && currentView === 'landing' && (
+      {currentView === 'landing' && (
         <LandingPage 
-          onGetJob={handleGetJob}
-          onPostJob={handlePostJob}
+          onGetJob={() => setCurrentView('job-seeker')}
+          onPostJob={() => setCurrentView('employer')}
         />
       )}
-      {isSignedIn && currentView === 'landing' && (
-        <LandingPage 
-          onGetJob={handleGetJob}
-          onPostJob={handlePostJob}
-        />
-      )}
-      {isSignedIn && currentView === 'job-seeker' && (
+      {currentView === 'job-seeker' && (
         <JobSeekerDashboard 
           onBack={() => setCurrentView('landing')} 
           jobs={jobs}
         />
       )}
-      {isSignedIn && currentView === 'employer' && (
+      {currentView === 'employer' && (
         <EmployerDashboard 
           onBack={() => setCurrentView('landing')} 
           onAddJob={addJob}

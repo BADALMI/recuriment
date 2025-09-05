@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
 import AIResumeBuilder from './AIResumeBuilder';
 import ResumeRating from './ResumeRating';
 import AIChatbot from './AIChatbot';
@@ -66,7 +65,6 @@ interface ResumeData {
 
 const JobSeekerDashboard: React.FC<JobSeekerDashboardProps> = ({ onBack, jobs }) => {
   const [activeTab, setActiveTab] = useState('jobs');
-  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showAIBuilder, setShowAIBuilder] = useState(false);
@@ -82,8 +80,8 @@ const JobSeekerDashboard: React.FC<JobSeekerDashboardProps> = ({ onBack, jobs })
 
   // Mock user profile data
   const userProfile = {
-    name: user?.fullName || 'John Doe',
-    email: user?.primaryEmailAddress?.emailAddress || 'john@example.com',
+    name: 'John Doe',
+    email: 'john@example.com',
     phone: '+1 (555) 123-4567',
     location: 'San Francisco, CA',
     bio: 'Passionate frontend developer with 5+ years of experience building responsive web applications...'
@@ -359,7 +357,7 @@ const JobSeekerDashboard: React.FC<JobSeekerDashboardProps> = ({ onBack, jobs })
             <User className="w-10 h-10 lg:w-12 lg:h-12 text-white" />
           </div>
           <div className="text-center sm:text-left">
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">{user?.fullName || 'John Doe'}</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">John Doe</h2>
             <p className="text-gray-600">Frontend Developer</p>
             <p className="text-sm text-gray-500">San Francisco, CA</p>
           </div>
@@ -370,7 +368,7 @@ const JobSeekerDashboard: React.FC<JobSeekerDashboardProps> = ({ onBack, jobs })
             <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
             <input 
               type="text" 
-              defaultValue={user?.fullName || 'John Doe'} 
+              defaultValue="John Doe" 
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -378,7 +376,7 @@ const JobSeekerDashboard: React.FC<JobSeekerDashboardProps> = ({ onBack, jobs })
             <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input 
               type="email" 
-              defaultValue={user?.primaryEmailAddress?.emailAddress || 'john@example.com'} 
+              defaultValue="john@example.com" 
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
