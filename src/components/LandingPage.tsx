@@ -1,5 +1,6 @@
 import React from 'react';
 import OnboardingOverlay from './OnboardingOverlay';
+import NavigationChatbot from './NavigationChatbot';
 import { Users, Briefcase, Star, TrendingUp, ArrowRight, CheckCircle, Sparkles, Bot, FileText, DollarSign } from 'lucide-react';
 
 interface LandingPageProps {
@@ -498,6 +499,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
           </div>
         </div>
       </footer>
+
+      <NavigationChatbot
+        onNavigateToJobSeeker={onGetJob}
+        onNavigateToEmployer={onPostJob}
+      />
     </div>
   );
 };
