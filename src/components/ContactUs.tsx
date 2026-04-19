@@ -45,7 +45,7 @@ const ContactUs: React.FC<ContactUsProps> = ({ onBack }) => {
               <Users className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
             </div>
             <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TalentConnect
+              NASG
             </span>
           </div>
           <button
@@ -180,7 +180,7 @@ const ContactUs: React.FC<ContactUsProps> = ({ onBack }) => {
               Ready to Get Started?
             </h2>
             <p className="text-lg text-gray-700 mb-6">
-              Reach out to our team today and discover how TalentConnect can help you.
+              Reach out to our team today and discover how NASG can help you.
             </p>
             <a
               href="mailto:inquire@nasearchg.com"
@@ -196,7 +196,7 @@ const ContactUs: React.FC<ContactUsProps> = ({ onBack }) => {
       <footer className="bg-gray-900 text-white py-12 lg:py-16">
         <div className="container mx-auto px-4 lg:px-6">
           <p className="text-gray-500 text-sm text-center">
-            © 2025 TalentConnect. All rights reserved.
+            © 2025 NASG. All rights reserved.
           </p>
         </div>
       </footer>

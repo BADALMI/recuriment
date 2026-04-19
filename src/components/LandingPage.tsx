@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import OnboardingOverlay from './OnboardingOverlay';
 import NavigationChatbot from './NavigationChatbot';
-import { Users, Briefcase, Star, TrendingUp, ArrowRight, CheckCircle, Sparkles, Bot, FileText, DollarSign } from 'lucide-react';
+import { Users, Briefcase, Star, TrendingUp, ArrowRight, CheckCircle, Sparkles, Bot, FileText, DollarSign, Zap, Brain, Target, MousePointerClick, Building2 } from 'lucide-react';
 
 interface LandingPageProps {
   onGetJob: () => void;
@@ -14,6 +14,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
   const [showOnboarding, setShowOnboarding] = React.useState(() => {
     return !localStorage.getItem('onboarding-completed');
   });
+  const [howItWorksTab, setHowItWorksTab] = useState<'candidate' | 'employer'>('candidate');
 
   const onboardingSteps = [
     {
@@ -56,12 +57,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
       <header className="container mx-auto px-4 lg:px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-blue-700 to-blue-500 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
             </div>
-            <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TalentConnect
-            </span>
+            <div>
+              <span className="text-xl lg:text-2xl font-bold text-blue-700">NASG</span>
+              <span className="hidden lg:inline text-sm text-gray-500 ml-2">North American Search Group</span>
+            </div>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
@@ -75,10 +77,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
       <section className="container mx-auto px-4 lg:px-6 py-12 lg:py-20">
         <div className="text-center max-w-4xl mx-auto">
           <div className="mb-6 flex flex-wrap justify-center gap-3">
-            <span className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
-              Executive Recruiters
+            <span className="inline-block px-4 py-2 bg-blue-50 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
+              North American Search Group Recruitment LLC
             </span>
-            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
+            <span className="inline-flex items-center px-4 py-2 bg-sky-50 text-sky-800 rounded-full text-sm font-medium border border-sky-200">
               <Sparkles className="w-4 h-4 mr-2" />
               AI-Powered Platform
             </span>
@@ -376,71 +378,228 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
       </section>
 
       {/* How It Works Section */}
-      <section className="py-12 lg:py-20 bg-white">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12 lg:mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-              <p className="text-lg lg:text-xl text-gray-600">Simple steps to find your next opportunity</p>
-            </div>
+          <div className="text-center mb-10 lg:mb-14">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4">How It Works</h2>
+            <p className="text-lg lg:text-xl text-gray-500 max-w-2xl mx-auto">
+              From profile to placement — AI handles everything in minutes, not weeks.
+            </p>
+          </div>
 
-            <div className="space-y-6 lg:space-y-8">
-              <div className="flex gap-4 lg:gap-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg lg:text-xl flex-shrink-0">
-                    1
-                  </div>
-                  <div className="hidden lg:block w-1 bg-gray-200 flex-grow mt-2" style={{minHeight: '80px'}}></div>
-                </div>
-                <div className="pb-6 lg:pb-8 pt-1 lg:pt-2">
-                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Register with TalentConnect</h3>
-                  <p className="text-base lg:text-lg text-gray-600">Share basic details about your background and career goals when you join.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 lg:gap-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg lg:text-xl flex-shrink-0">
-                    2
-                  </div>
-                  <div className="hidden lg:block w-1 bg-gray-200 flex-grow mt-2" style={{minHeight: '80px'}}></div>
-                </div>
-                <div className="pb-6 lg:pb-8 pt-1 lg:pt-2">
-                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Build Your Professional Profile</h3>
-                  <p className="text-base lg:text-lg text-gray-600">Create a detailed profile so our team understands your skills, experience, and what you are looking for.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 lg:gap-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg lg:text-xl flex-shrink-0">
-                    3
-                  </div>
-                  <div className="hidden lg:block w-1 bg-gray-200 flex-grow mt-2" style={{minHeight: '80px'}}></div>
-                </div>
-                <div className="pb-6 lg:pb-8 pt-1 lg:pt-2">
-                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Submit Your Resume</h3>
-                  <p className="text-base lg:text-lg text-gray-600">Upload your resume for review by our recruitment consultants.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 lg:gap-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg lg:text-xl flex-shrink-0">
-                    4
-                  </div>
-                </div>
-                <div className="pt-1 lg:pt-2">
-                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Get Connected with Opportunities</h3>
-                  <p className="text-base lg:text-lg text-gray-600">Our team connects you with suitable roles and keeps you informed throughout the hiring process.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-12 lg:mt-16 p-6 lg:p-8 bg-blue-50 rounded-2xl border border-blue-200">
-              <p className="text-center text-lg text-gray-800">Our team works behind the scenes to help you land the right opportunity faster.</p>
+          {/* Tab Toggle */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex bg-gray-100 rounded-xl p-1.5 shadow-inner">
+              <button
+                onClick={() => setHowItWorksTab('candidate')}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                  howItWorksTab === 'candidate'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                <span>For Candidates</span>
+              </button>
+              <button
+                onClick={() => setHowItWorksTab('employer')}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                  howItWorksTab === 'employer'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
+                <span>For Employers</span>
+              </button>
             </div>
           </div>
+
+          {/* Candidate Steps */}
+          {howItWorksTab === 'candidate' && (
+            <div className="max-w-4xl mx-auto">
+              <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
+                {/* Step 1 */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-sky-50 border border-blue-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Zap className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Step 1</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Create Your Free Profile</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold mb-3">
+                    Takes 2 minutes
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Sign up and tell us your field, experience level, salary expectations, and career goals. No lengthy forms — our AI fills in the gaps automatically.
+                  </p>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-teal-500 uppercase tracking-widest mb-1">Step 2</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">AI Analyzes Your Skills</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-semibold mb-3">
+                    Instant
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Our AI scans your background, identifies your core strengths, and builds a powerful candidate profile. It also scores your resume and suggests improvements before employers ever see it.
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Target className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Step 3</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Get Matched Instantly</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold mb-3">
+                    Within seconds
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Forget scrolling through hundreds of irrelevant jobs. Our AI matches you to the most relevant executive roles based on your skills, experience, salary range, location, and culture fit — automatically, 24/7.
+                  </p>
+                </div>
+
+                {/* Step 4 */}
+                <div className="relative bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <MousePointerClick className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-green-600 uppercase tracking-widest mb-1">Step 4</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Apply &amp; Get Hired</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold mb-3">
+                    Same day
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Apply with one click using your AI-optimized resume. Track every application in real time. Our AI even preps you for interviews with role-specific tips and likely questions.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 text-center">
+                <button
+                  onClick={onGetJob}
+                  className="group inline-flex items-center space-x-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <span>Find My Perfect Role</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Employer Steps */}
+          {howItWorksTab === 'employer' && (
+            <div className="max-w-4xl mx-auto">
+              <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
+                {/* Step 1 */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-sky-50 border border-blue-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Building2 className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Step 1</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Post Your Role</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold mb-3">
+                    Under 5 minutes
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Describe the role in plain language. Our AI instantly generates a compelling, ATS-optimized job description tailored to attract the right candidates.
+                  </p>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-teal-500 uppercase tracking-widest mb-1">Step 2</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">AI Screens Candidates</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-semibold mb-3">
+                    Automated
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Our AI pre-screens every applicant against your requirements — scoring skills, experience, salary fit, and culture alignment so only top matches reach you.
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <DollarSign className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Step 3</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Benchmark Salary in Real Time</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold mb-3">
+                    Instant insights
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Know exactly where your offer stands. Our AI rates your salary against live market data and tells you how competitive you are before posting, so you attract the best.
+                  </p>
+                </div>
+
+                {/* Step 4 */}
+                <div className="relative bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-green-600 uppercase tracking-widest mb-1">Step 4</div>
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900">Hire with Confidence</h3>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold mb-3">
+                    Fast &amp; reliable
+                  </div>
+                  <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
+                    Review a shortlist of verified, AI-ranked candidates. Schedule interviews, collaborate with your team, and make offers — all from one streamlined dashboard.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 text-center">
+                <button
+                  onClick={onPostJob}
+                  className="group inline-flex items-center space-x-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <span>Post a Job Now</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -470,12 +629,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-8 lg:mb-12">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Users className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
-                <span className="text-lg lg:text-xl font-bold">TalentConnect</span>
+                <span className="text-lg lg:text-xl font-bold text-white">NASG</span>
               </div>
+              <p className="text-gray-400 text-xs mb-3">North American Search Group Recruitment LLC</p>
               <p className="text-gray-400 text-sm lg:text-base">Connecting professionals with opportunity across North America.</p>
             </div>
 
@@ -495,7 +655,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetJob, onPostJob, onAbout,
             <div className="mb-4">
               <p className="text-gray-400 text-sm lg:text-base mb-4">We would love to hear from you. Share your feedback or let us know how we can help.</p>
             </div>
-            <p className="text-gray-500 text-sm lg:text-base">© 2025 TalentConnect. All rights reserved.</p>
+            <p className="text-gray-500 text-sm lg:text-base">© 2026 North American Search Group Recruitment LLC. All rights reserved.</p>
           </div>
         </div>
       </footer>
