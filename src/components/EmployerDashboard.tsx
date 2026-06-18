@@ -3,6 +3,29 @@ import OnboardingOverlay from './OnboardingOverlay';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import SalaryBenchmark from './SalaryBenchmark';
 import type { Job, SalaryRating } from '../types';
+import type { JobPosting, JobFormState, ClientLoginState } from '../employerTypes';
+import {
+  currencies,
+  countries,
+  usStates,
+  canadianProvinces,
+  locationTypes,
+  seniorityLevels,
+  jobCategories,
+  searchTypes
+} from '../employerConstants';
+import {
+  createEmptyJobForm,
+  createEmptyClientLogin
+} from '../employerTypes';
+import {
+  buildSalaryString,
+  buildLocationString,
+  createJobForJobSeekers,
+  createEmployerJobPosting,
+  generateJDRequestPrompt,
+  generateJDParserPrompt
+} from '../employerUtils';
 import {
   ArrowLeft,
   ArrowRight,
@@ -35,20 +58,6 @@ interface EmployerDashboardProps {
   onAddJob: (job: Omit<Job, 'id' | 'posted'>) => void;
 }
 
-interface JobPosting {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  salary: string;
-  requirements: string[];
-  description: string;
-  type: string;
-  posted: string;
-  status: 'active' | 'draft' | 'closed';
-  salaryRating?: SalaryRating;
-}
-
 const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob }) => {
   const [activeTab, setActiveTab] = useState('post-job');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -58,10 +67,7 @@ const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob 
   });
   const [salaryRating, setSalaryRating] = useState<SalaryRating | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [clientLogin, setClientLogin] = useState({
-    email: '',
-    password: ''
-  });
+  const [clientLogin, setClientLogin] = useState<ClientLoginState>(createEmptyClientLogin());
   const [currentStep, setCurrentStep] = useState(1); // 1 = Job Posting Form, 2 = Search Type Selection
   const [selectedSearchType, setSelectedSearchType] = useState<string>('');
   const [isParsingDocument, setIsParsingDocument] = useState(false);
@@ -159,82 +165,6 @@ const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob 
 
   const genAI = new GoogleGenerativeAI('AIzaSyDeuDXluDkLSNaaJBzsR30uilQ4kRXVaAw');
 
-  const currencies = [
-    { code: 'USD', name: 'US Dollar ($)' },
-    { code: 'CAD', name: 'Canadian Dollar (C$)' },
-    { code: 'EUR', name: 'Euro (€)' },
-    { code: 'GBP', name: 'British Pound (£)' },
-    { code: 'AUD', name: 'Australian Dollar (A$)' },
-    { code: 'SGD', name: 'Singapore Dollar (S$)' },
-    { code: 'CHF', name: 'Swiss Franc (CHF)' },
-    { code: 'JPY', name: 'Japanese Yen (¥)' },
-    { code: 'NZD', name: 'New Zealand Dollar (NZ$)' },
-    { code: 'OTHER', name: 'Other (Custom)' }
-  ];
-
-  const countries = [
-    // North America
-    'United States',
-    'Canada',
-    'Mexico',
-    'Bermuda',
-    'Cayman Islands',
-    'Barbados',
-    // Europe
-    'England',
-    'Scotland',
-    'Ireland',
-    'Northern Ireland',
-    'Switzerland',
-    'Germany',
-    'Austria',
-    'Luxembourg',
-    'Netherlands',
-    'Belgium',
-    'France',
-    'Spain',
-    'Portugal',
-    'Czech Republic',
-    'Gibraltar',
-    // Asia Pacific
-    'Australia',
-    'New Zealand',
-    'India',
-    'China',
-    'Hong Kong',
-    'Singapore',
-    'Malaysia',
-    'Thailand',
-    // Middle East
-    'UAE',
-    'Kuwait',
-    'Saudi Arabia',
-    // Latin America
-    'Colombia',
-    'Brazil',
-    'Argentina',
-    'Peru',
-    // Africa
-    'South Africa',
-    // Other
-    'Other'
-  ];
-
-  const usStates = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'];
-
-  const canadianProvinces = ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'];
-
-  const locationTypes = ['On-site', 'Remote', 'Hybrid'];
-  const seniorityLevels = ['Individual Contributor', 'Manager', 'Senior Manager', 'Director', 'Senior Director', 'VP', 'Senior VP', 'C-Level'];
-  const jobCategories = [
-    { group: 'Life Insurance', options: ['Life - Actuarial', 'Life - Other', 'Life - Data Science', 'Life - Underwriting', 'Life - Data Engineering', 'Life - Business Intelligence', 'Life - ILS', 'Life - Pension', 'Life - Retirement', 'Life - AI', 'Life - Machine Learning'] },
-    { group: 'Non-Life Insurance', options: ['Non-Life - Actuarial', 'Non-Life - Cat Modeling', 'Non-Life - Risk', 'Non-Life - Data Science', 'Non-Life - Underwriting', 'Non-Life - Other', 'Non-Life - Investment', 'Non-Life - Product Management', 'Non-Life - Data Engineer', 'Non-Life - Business Intelligence', 'Non-Life - Climate Risk', 'Non-Life - ESG', 'Non-Life - AI', 'Non-Life - Machine Learning'] },
-    { group: 'Health Insurance', options: ['Health - Actuarial', 'Health - Underwriting', 'Health - Data Science'] },
-    { group: 'Pension', options: ['Pension - Actuarial', 'Pension - Retirement'] },
-    { group: 'Technology (Non-Insurance)', options: ['Tech - Artificial Intelligence', 'Tech - Machine Learning', 'Tech - Data Science', 'Tech - Data Engineering', 'Tech - Product Management', 'Tech - Software Engineering'] },
-    { group: 'Cross-Domain', options: ['Cross-Domain - Business Intelligence', 'Cross-Domain - Data Engineering'] }
-  ];
-
   const handleInputChange = (field: string, value: string | boolean) => {
     if (field.startsWith('benefits.')) {
       const benefitField = field.split('.')[1];
@@ -277,55 +207,7 @@ const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob 
       reader.onload = async (e) => {
         const text = e.target?.result as string;
 
-        const prompt = `
-          Analyze the following job description document and extract all relevant information. Return the response in JSON format with the exact structure shown below:
-
-          Document Content:
-          ${text}
-
-          Please extract:
-          1. Job title
-          2. Company name
-          3. Location (city, state/province, country)
-          4. Job type (Full-time, Part-time, Contract, etc.)
-          5. Location type (On-site, Remote, Hybrid)
-          6. Salary range (min and max)
-          7. Currency (USD, CAD, EUR, etc.)
-          8. Required skills and qualifications
-          9. Full job description
-          10. Seniority level
-          11. Travel percentage
-          12. Benefits mentioned
-          13. Any bonus information
-
-          Return ONLY valid JSON in this exact format:
-          {
-            "title": "string",
-            "company": "string",
-            "city": "string",
-            "state": "string",
-            "country": "string",
-            "locationType": "string",
-            "type": "string",
-            "baseSalaryMin": "string",
-            "baseSalaryMax": "string",
-            "currency": "string",
-            "requirements": "string (comma-separated)",
-            "description": "string",
-            "seniorityLevel": "string",
-            "travelPercentage": "string",
-            "benefits": {
-              "pension": boolean,
-              "health": boolean,
-              "dental": boolean,
-              "vacation": "string"
-            },
-            "bonusTarget": "string",
-            "bonusMax": "string"
-          }
-
-          If any field is not found in the document, use empty string or false for booleans.
-        `;
+        const prompt = generateJDParserPrompt(text);
 
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
@@ -399,46 +281,7 @@ const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob 
 
     setIsGenerating(true);
     try {
-      // Get the actual currency to use
-      const actualCurrency = jobForm.currency === 'OTHER' ? jobForm.customCurrency : jobForm.currency;
-
-      const salaryInfo = jobForm.baseSalaryMin && jobForm.baseSalaryMax
-        ? `${actualCurrency} ${jobForm.baseSalaryMin} - ${jobForm.baseSalaryMax}`
-        : 'Competitive';
-
-      const bonusInfo = jobForm.bonusTarget && jobForm.bonusMax
-        ? jobForm.bonusType === 'percentage'
-          ? ` + Bonus (${jobForm.bonusTarget}% - ${jobForm.bonusMax}%)`
-          : ` + Bonus (${actualCurrency} ${jobForm.bonusTarget} - ${jobForm.bonusMax})`
-        : '';
-
-      const fullLocation = jobForm.city && jobForm.state
-        ? `${jobForm.city}, ${jobForm.state}`
-        : 'Not specified';
-
-      const prompt = `
-        Generate a comprehensive and professional job description for the following position:
-
-        Job Title: ${jobForm.title}
-        Company: ${jobForm.company}
-        Job Category: ${jobForm.jobCategory || 'Not specified'}
-        Location: ${fullLocation} (${jobForm.locationType})
-        Travel: ${jobForm.travelPercentage || 'None'}
-        Seniority Level: ${jobForm.seniorityLevel || 'Not specified'}
-        Salary Range: ${salaryInfo}${bonusInfo}
-        Requirements: ${jobForm.requirements || 'Standard requirements for this role'}
-        Benefits: ${jobForm.benefits.health ? 'Health Insurance, ' : ''}${jobForm.benefits.dental ? 'Dental, ' : ''}${jobForm.benefits.pension ? 'Pension/401k, ' : ''}${jobForm.benefits.vacation ? `${jobForm.benefits.vacation} vacation` : ''}
-
-        Please create a detailed job description that includes:
-        1. A compelling overview of the role and company
-        2. Key responsibilities and duties
-        3. Required qualifications and skills
-        4. Preferred qualifications
-        5. Benefits and what makes this opportunity attractive
-        6. Company culture highlights
-
-        Make it professional, engaging, and tailored to attract top talent in the ${jobForm.jobCategory || 'insurance and financial services'} sector. The description should be 3-4 paragraphs long and highlight why candidates would want to work for this company.
-      `;
+      const prompt = generateJDRequestPrompt(jobForm);
 
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
@@ -539,141 +382,16 @@ const EmployerDashboard: React.FC<EmployerDashboardProps> = ({ onBack, onAddJob 
   // Merge selected search type into job form
   const finalJobForm = { ...jobForm, searchType: selectedSearchType };
 
-  // Determine currency
-  const actualCurrency =
-    finalJobForm.currency === 'OTHER'
-      ? finalJobForm.customCurrency
-      : finalJobForm.currency;
-
-  // Build salary string
-  let salaryString = 'Competitive';
-
-  if (finalJobForm.baseSalaryMin && finalJobForm.baseSalaryMax) {
-    salaryString = `${actualCurrency} ${finalJobForm.baseSalaryMin} - ${finalJobForm.baseSalaryMax}`;
-  }
-
-  if (finalJobForm.bonusTarget && finalJobForm.bonusMax) {
-    if (finalJobForm.bonusType === 'percentage') {
-      salaryString += ` + Bonus (${finalJobForm.bonusTarget}% - ${finalJobForm.bonusMax}%)`;
-    } else {
-      salaryString += ` + Bonus (${actualCurrency} ${finalJobForm.bonusTarget} - ${finalJobForm.bonusMax})`;
-    }
-  }
-
-  // Build location string
-  let locationString = '';
-
-  if (finalJobForm.locationType === 'Remote') {
-    locationString = finalJobForm.state
-      ? `${finalJobForm.state}, ${finalJobForm.country} (Remote)`
-      : `${finalJobForm.country} (Remote - Work from anywhere)`;
-  } else {
-    if (
-      finalJobForm.country === 'United States' ||
-      finalJobForm.country === 'Canada'
-    ) {
-      locationString = `${finalJobForm.city}, ${finalJobForm.state} (${finalJobForm.locationType})`;
-    } else {
-      locationString = `${finalJobForm.city}, ${finalJobForm.country} (${finalJobForm.locationType})`;
-    }
-  }
-
-  // Job for job seekers
-  const jobForJobSeekers: Omit<Job, 'id' | 'posted'> = {
-    title: finalJobForm.title,
-    company: finalJobForm.company,
-    location: locationString,
-    type: finalJobForm.type,
-    salary: salaryString,
-    description: finalJobForm.description,
-    requirements: finalJobForm.requirements
-      .split(',')
-      .map(req => req.trim())
-      .filter(Boolean),
-    tags: [
-      finalJobForm.type,
-      finalJobForm.locationType,
-      finalJobForm.jobCategory,
-      finalJobForm.seniorityLevel,
-      salaryString.includes(actualCurrency)
-        ? 'Competitive Salary'
-        : 'Salary Negotiable'
-    ].filter(Boolean)
-  };
-
+  // Create job for job seekers and add it
+  const jobForJobSeekers = createJobForJobSeekers(finalJobForm);
   onAddJob(jobForJobSeekers);
 
-  // Employer job record
-  const newJob: JobPosting = {
-    id: Date.now().toString(),
-    title: finalJobForm.title,
-    company: finalJobForm.company,
-    location: locationString,
-    salary: salaryString,
-    requirements: finalJobForm.requirements
-      .split(',')
-      .map(req => req.trim())
-      .filter(Boolean),
-    description: finalJobForm.description,
-    type: finalJobForm.type,
-    posted: 'Just now',
-    status: 'active',
-    salaryRating
-  };
-
+  // Create employer job record
+  const newJob = createEmployerJobPosting(finalJobForm, salaryRating);
   setPostedJobs(prev => [newJob, ...prev]);
 
   // Reset form
-  setJobForm({
-    title: '',
-    company: '',
-    country: 'United States',
-    city: '',
-    state: '',
-    locationType: 'On-site',
-    daysInOffice: '',
-    travelPercentage: '',
-    salary: '',
-    currency: 'USD',
-    customCurrency: '',
-    baseSalaryMin: '',
-    baseSalaryMax: '',
-    bonusTarget: '',
-    bonusMax: '',
-    bonusType: 'amount',
-    benefits: {
-      pension: false,
-      health: false,
-      dental: false,
-      vacation: ''
-    },
-    perks: {
-      rsuOrStockOptions: '',
-      equityOrProfitSharing: '',
-      signOnBonus: '',
-      relocationAssistance: '',
-      temporaryHousing: '',
-      otherPerks: '',
-      visaSponsorship: ''
-    },
-    seniorityLevel: '',
-    directReports: '',
-    indirectReports: '',
-    reportsToName: '',
-    reportsToTitle: '',
-    dottedLineToName: '',
-    dottedLineToTitle: '',
-    jobCategory: '',
-    requirements: '',
-    description: '',
-    type: 'Full-time',
-    confidentialSearch: false,
-    sellingPoints: '',
-    applicationProcess: '',
-    targetStartDate: '',
-    searchType: ''
-  });
-
+  setJobForm(createEmptyJobForm());
   setSelectedSearchType('');
   setCurrentStep(1);
   setActiveTab('manage-jobs');
